@@ -63,22 +63,6 @@ public class tools {
         );
     }
 
-
-    public static void DeathLocationUpdater(BlockPos pos, ServerLevel world, String UUID) throws Exception {
-        StorageManager.PlayerStorageClass storages = GetPlayerStorage(UUID);
-
-        StorageManager.StorageClass storage = storages.storage;
-        StorageManager.StorageClass.Player playerStorage = storages.playerStorage;
-
-        playerStorage.deathLocation.x = pos.getX();
-        playerStorage.deathLocation.y = pos.getY();
-        playerStorage.deathLocation.z = pos.getZ();
-        playerStorage.deathLocation.world = world.dimension().location().toString();
-
-        StorageSaver(storage);
-    }
-
-
     public static Pair<Integer, Optional<Vec3>> teleportSafetyChecker(int playerX, int playerY, int playerZ, ServerLevel world, ServerPlayer player) {
         int row = 1;
         int rows = 3;

@@ -1,6 +1,8 @@
-# Teleport Commands <img src="https://raw.githubusercontent.com/MrSn0wy/TeleportCommands/main/common/src/main/resources/teleport_commands.png" alt="Teleport Commands Logo" width="30"/>
+# Tele#### Currently available commands:
 
-A Minecraft server-side mod that adds various teleportation related commands, like /home /tpa and /back
+- `/sethome <n>` - Creates a new homeommands <img src="https://raw.githubusercontent.com/MrSn0wy/TeleportCommands/main/common/src/main/resources/teleport_commands.png" alt="Teleport Commands Logo" width="30"/>
+
+A Minecraft server-side mod that adds various teleportation related commands, like /home and /tpa
 
 Here is the [Changelog](CHANGELOG.md)
 
@@ -35,8 +37,6 @@ Here is the [Changelog](CHANGELOG.md)
 - [ ] Create a config to add any delays and disable commands, also add commands for operators in game
 - [ ] Add a perm system
 - [x] Json Storage automatic updater & cleaner
-- [x] Modify /back to check if the location is safe and automatically choose a nearby location that is safe
-- [x] Limit tpa requests for a player
 - [x] Add translation system
 - [x] Improve responses for commands
 - [x] Add Quilt support and NeoForge

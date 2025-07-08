@@ -56,11 +56,6 @@ public class StorageManager {
 
             newPlayer.UUID = UUID;
             newPlayer.DefaultHome = "";
-            newPlayer.deathLocation = new StorageClass.Player.Location();
-            newPlayer.deathLocation.x = new StorageClass.Player.Location().x;
-            newPlayer.deathLocation.y = new StorageClass.Player.Location().y;
-            newPlayer.deathLocation.z = new StorageClass.Player.Location().z;
-            newPlayer.deathLocation.world = "";
 
             newPlayer.Homes = new ArrayList<>();
 
@@ -130,7 +125,6 @@ public class StorageManager {
         public static class Player {
             public String UUID;
             public String DefaultHome;
-            public Location deathLocation;
             public List<Home> Homes;
 
             public static class Location {

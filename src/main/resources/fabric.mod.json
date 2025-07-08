@@ -17,12 +17,9 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "dev.mrsnowy.teleport_commands.fabricInit"
+            "dev.mrsnowy.teleport_commands.TeleportCommands"
         ]
     },
-    "mixins": [
-        "${mod_id}.mixins.json"
-    ],
     "custom": {
         "modmenu": {
             "links": {

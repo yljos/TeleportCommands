@@ -1,8 +1,4 @@
 {
-  "commands.teleport_commands.back.go": "Indulás vissza",
-  "commands.teleport_commands.back.same": "Vissza",
-  "commands.teleport_commands.back.noLocation": "Nem található a koordináta",
-
   "commands.teleport_commands.home.set": "Otthon beállítása",
   "commands.teleport_commands.home.setError": "Hiba történt az otthon beállításával!",
   "commands.teleport_commands.home.go": "Indulás haza!",

@@ -3,10 +3,10 @@ package dev.mrsnowy.teleport_commands;
 import com.google.gson.*;
 import dev.mrsnowy.teleport_commands.storage.StorageManager;
 import dev.mrsnowy.teleport_commands.commands.*;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.commands.Commands;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import static dev.mrsnowy.teleport_commands.utils.tools.DeathLocationUpdater;
-
-public class TeleportCommands {
+public class TeleportCommands implements ModInitializer {
 	public static final String MOD_ID = "teleport_commands";
 	public static final String MOD_NAME = "Teleport Commands";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
@@ -28,9 +26,17 @@ public class TeleportCommands {
 	public static Path SAVE_DIR;
 	public static Path CONFIG_DIR;
 
+	@Override
+	public void onInitialize() {
+		LOGGER.info("Initializing Teleport Commands!");
+		
+		// Register server start event
+		ServerLifecycleEvents.SERVER_STARTED.register(this::initializeMod);
+	}
+
 
 	// Gets ran when the server starts
-	public static void initializeMod(MinecraftServer server) {
+	private void initializeMod(MinecraftServer server) {
 		// initialize da variables
 		LOGGER.info("Initializing Teleport Commands! Hello {}!", MOD_LOADER);
 
@@ -43,19 +49,8 @@ public class TeleportCommands {
 
 		// initialize commands, also allows me to easily disable any when there is a config
 		Commands commandManager = server.getCommands();
-		back.register(commandManager);
 		home.register(commandManager);
 		tpa.register(commandManager);
-	}
-
-	public static void onPlayerDeath(ServerPlayer player) {
-		try {
-			// update /back command position
-			DeathLocationUpdater(new BlockPos(player.getBlockX(), player.getBlockY(), player.getBlockZ()), player.serverLevel(), player.getStringUUID());
-
-		} catch (Exception e) {
-			LOGGER.error(e.toString());
-		}
 	}
 
 	// cleans and updates Storage to the newest "version"
@@ -92,16 +87,6 @@ public class TeleportCommands {
 
 							String DefaultHome = player.has("DefaultHome")
 									? player.get("DefaultHome").getAsString() : "";
-
-
-							// Clean death location after server restart
-							JsonObject deathLocation = new JsonObject();
-
-							deathLocation.addProperty("x", 0);
-							deathLocation.addProperty("y", 0);
-							deathLocation.addProperty("z", 0);
-							deathLocation.addProperty("world", "");
-
 
 							JsonArray homes = new JsonArray();
 
@@ -165,7 +150,6 @@ public class TeleportCommands {
 
 								newPlayer.addProperty("UUID", UUID);
 								newPlayer.addProperty("DefaultHome", DefaultHome);
-								newPlayer.add("deathLocation", deathLocation);
 								newPlayer.add("Homes", homes);
 
 								newPlayersArray.add(newPlayer);

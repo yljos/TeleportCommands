@@ -1,8 +1,4 @@
 {
-  "commands.teleport_commands.back.go": "Terug gaan",
-  "commands.teleport_commands.back.same": "Al Terug",
-  "commands.teleport_commands.back.noLocation": "Geen Locatie Gevonden!",
-
   "commands.teleport_commands.home.set": "Huis Ingesteld",
   "commands.teleport_commands.home.setError": "Probleem Met Het Huis Instellen!",
   "commands.teleport_commands.home.go": "Naar Huis",

@@ -1,8 +1,4 @@
 {
-  "commands.teleport_commands.back.go": "Going Back",
-  "commands.teleport_commands.back.same": "Already Back",
-  "commands.teleport_commands.back.noLocation": "No Location Found!",
-
   "commands.teleport_commands.home.set": "Home Set",
   "commands.teleport_commands.home.setError": "Error Setting Home!",
   "commands.teleport_commands.home.go": "Going Home",
