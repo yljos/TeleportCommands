@@ -51,6 +51,7 @@ public class TeleportCommands implements ModInitializer {
 		Commands commandManager = server.getCommands();
 		home.register(commandManager);
 		tpa.register(commandManager);
+		warp.register(commandManager);
 	}
 
 	// cleans and updates Storage to the newest "version"

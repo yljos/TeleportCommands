@@ -21,6 +21,12 @@ Here is the [Changelog](CHANGELOG.md)
 
 - `/tpa <player>` - Teleports you to another player
 - `/tpahere <player>` - Teleports another player to you
+<br>
+
+- `/setwarp <name>` - Creates a new warp point
+- `/warp <name>` - Teleports you to a warp point
+- `/delwarp <name>` - Deletes a warp point
+- `/warps` - Shows a list of all warp points
 
 <br>
 
@@ -42,7 +48,7 @@ Here is the [Changelog](CHANGELOG.md)
 
 ### Want to help?
 
-1. You can create a translation file so other people can use the mod in their native language: [translations.md](./common/src/main/resources/assets/teleport_commands/lang/translations.md)
+You can help improve this mod by reporting bugs or suggesting new features!
 
 #### Notes
 

@@ -25,6 +25,20 @@
 
   "commands.teleport_commands.tpa.self": "Well, that was easy",
 
+  "commands.teleport_commands.warp.set": "Warp Set",
+  "commands.teleport_commands.warp.setError": "Error Setting Warp!",
+  "commands.teleport_commands.warp.go": "Going to Warp",
+  "commands.teleport_commands.warp.goError": "Error Going to Warp!",
+  "commands.teleport_commands.warp.goSame": "Already at Warp",
+  "commands.teleport_commands.warp.delete": "Warp Deleted",
+  "commands.teleport_commands.warp.deleteError": "Error Deleting Warp!",
+  "commands.teleport_commands.warp.notFound": "Warp Not Found!",
+  "commands.teleport_commands.warp.exists": "Warp Already Exists!",
+  "commands.teleport_commands.warp.homeless": "No Warps Found!",
+
+  "commands.teleport_commands.warps.error": "Error Getting Warps!",
+  "commands.teleport_commands.warps.warps": "Warps:",
+
   "commands.teleport_commands.common.teleport": "Teleporting",
   "commands.teleport_commands.common.error": "Error Teleporting!",
   "commands.teleport_commands.common.noSafeLocation": "No Safe Location Found!",

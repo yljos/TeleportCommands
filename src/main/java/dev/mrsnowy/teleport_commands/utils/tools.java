@@ -115,21 +115,18 @@ public class tools {
 
 
 
-    // Gets the translated text for each player based on their language, this is fully server side and actually works (UNLIKE MOJANG'S TRANSLATED KEY'S WHICH ARE CLIENT SIDE) (I'm not mad, I swear)
+    // Gets the translated text from English language file
     public static MutableComponent getTranslatedText(String key, ServerPlayer player, MutableComponent... args) {
-        String language = "en_us"; // Default to English for 1.20.1 compatibility
         String regex = "%(\\d+)%";
         Pattern pattern = Pattern.compile(regex);
 
-        // the try catch stuff is so wacky, but it works fine and I don't need to check everything
         try {
-            String filePath = String.format("/assets/%s/lang/%s.json", MOD_ID, language);
+            String filePath = String.format("/assets/%s/lang/en_us.json", MOD_ID);
             InputStream stream = TeleportCommands.class.getResourceAsStream(filePath);
 
             Reader reader = new InputStreamReader(Objects.requireNonNull(stream), StandardCharsets.UTF_8);
             JsonElement json = JsonParser.parseReader(reader);
             String translation = json.getAsJsonObject().get(key).getAsString();
-
 
             // Adds the optional MutableComponents in the correct places
             Matcher matcher = pattern.matcher(Objects.requireNonNull(translation));
@@ -150,38 +147,7 @@ public class tools {
             return component;
 
         } catch (Exception e) {
-            TeleportCommands.LOGGER.error(e.toString());
-            try {
-                if (!Objects.equals(language, "en_us")) {
-//                    TeleportCommands.LOGGER.warn("Key \"{}\" not found in the language: {}, falling back to default (en_us)", key, language);
-
-                    String filePath = String.format("/assets/%s/lang/en_us.json", MOD_ID);
-                    InputStream stream = TeleportCommands.class.getResourceAsStream(filePath);
-
-                    Reader reader = new InputStreamReader(Objects.requireNonNull(stream), StandardCharsets.UTF_8);
-                    JsonElement json = JsonParser.parseReader(reader);
-                    String translation = json.getAsJsonObject().get(key).getAsString();
-
-
-                    Matcher matcher = pattern.matcher(Objects.requireNonNull(translation));
-
-                    MutableComponent component = Component.literal("");
-                    int lastIndex = 0;
-
-                    while (matcher.find()) {
-                        component.append(Component.literal(translation.substring(lastIndex, matcher.start())));
-
-                        int index = Integer.parseInt(matcher.group(1));
-                        component.append(args[index]);
-
-                        lastIndex = matcher.end();
-                    }
-                    component.append(translation.substring(lastIndex));
-
-                    return component;
-                }
-            } catch (Exception ignored1) {}
-            TeleportCommands.LOGGER.error("Key \"{}\" not found in the default language (en_us), sending raw key as fallback.", key);
+            TeleportCommands.LOGGER.error("Key \"{}\" not found in en_us.json, sending raw key as fallback.", key);
             return Component.literal(key);
         }
     }

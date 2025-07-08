@@ -34,6 +34,7 @@ public class StorageManager {
             if (new File(String.valueOf(STORAGE_FILE)).length() == 0) {
                 StorageClass root = new StorageClass();
                 root.Players = new ArrayList<>();
+                root.Warps = new ArrayList<>(); // 初始化Warps列表
                 StorageSaver(root);
             }
 
@@ -121,6 +122,7 @@ public class StorageManager {
 
     public static class StorageClass {
         public List<Player> Players;
+        public List<Warp> Warps; // 添加全局Warps支持
 
         public static class Player {
             public String UUID;
@@ -141,6 +143,14 @@ public class StorageManager {
                 public int z;
                 public String world;
             }
+        }
+        
+        public static class Warp {
+            public String name;
+            public int x;
+            public int y;
+            public int z;
+            public String world;
         }
     }
 }
