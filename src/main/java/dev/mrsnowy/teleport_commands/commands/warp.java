@@ -7,14 +7,11 @@ import dev.mrsnowy.teleport_commands.suggestions.WarpSuggestionProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -76,20 +73,6 @@ public class warp {
                             }
                             return 0;
                         })));
-
-        commandManager.getDispatcher().register(Commands.literal("warps")
-                .executes(context -> {
-                    final ServerPlayer player = context.getSource().getPlayerOrException();
-
-                    try {
-                        PrintWarps(player);
-                    } catch (Exception e) {
-                        TeleportCommands.LOGGER.error("Error while printing warps!", e);
-                        player.displayClientMessage(getTranslatedText("commands.teleport_commands.warps.error", player).withStyle(ChatFormatting.RED, ChatFormatting.BOLD), true);
-                        return 1;
-                    }
-                    return 0;
-                }));
     }
 
 
@@ -195,41 +178,6 @@ public class warp {
             player.displayClientMessage(getTranslatedText("commands.teleport_commands.warp.delete", player), true);
         } else {
             player.displayClientMessage(getTranslatedText("commands.teleport_commands.warp.notFound", player).withStyle(ChatFormatting.RED), true);
-        }
-    }
-
-    private static void PrintWarps(ServerPlayer player) throws Exception {
-        StorageManager.PlayerStorageClass storages = GetPlayerStorage(player.getStringUUID());
-        StorageManager.StorageClass storage = storages.storage;
-        
-        if (storage.Warps == null || storage.Warps.isEmpty()) {
-            player.displayClientMessage(getTranslatedText("commands.teleport_commands.warp.homeless", player).withStyle(ChatFormatting.AQUA), true);
-            return;
-        }
-        
-        player.displayClientMessage(getTranslatedText("commands.teleport_commands.warps.warps", player).withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD), false);
-        
-        for (StorageManager.StorageClass.Warp currentWarp : storage.Warps) {
-            String name = String.format("  - %s", currentWarp.name);
-            String coords = String.format("[X%d Y%d Z%d]", currentWarp.x, currentWarp.y, currentWarp.z);
-            String dimension = String.format(" [%s]", currentWarp.world);
-            
-            player.displayClientMessage(Component.literal(name).withStyle(ChatFormatting.AQUA), false);
-            
-            player.displayClientMessage(Component.literal("     | ").withStyle(ChatFormatting.AQUA)
-                    .append(Component.literal(coords).withStyle(ChatFormatting.LIGHT_PURPLE)
-                            .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, 
-                                    String.format("X%d Y%d Z%d", currentWarp.x, currentWarp.y, currentWarp.z)))))
-                    .append(Component.literal(dimension).withStyle(ChatFormatting.DARK_PURPLE)
-                            .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, currentWarp.world)))), false);
-            
-            player.displayClientMessage(Component.literal("     | ").withStyle(ChatFormatting.AQUA)
-                    .append(getTranslatedText("commands.teleport_commands.homes.tp", player).withStyle(ChatFormatting.GREEN)
-                            .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/warp %s", currentWarp.name)))))
-                    .append(" ")
-                    .append(getTranslatedText("commands.teleport_commands.homes.delete", player).withStyle(ChatFormatting.RED)
-                            .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/delwarp %s", currentWarp.name)))))
-                    .append("\n"), false);
         }
     }
 }
