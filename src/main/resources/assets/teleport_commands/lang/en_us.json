@@ -24,15 +24,6 @@
   "commands.teleport_commands.homes.delete": "[Delete]",
 
   "commands.teleport_commands.tpa.self": "Well, that was easy",
-  "commands.teleport_commands.tpa.alreadySent": "A request has already been sent to %0%",
-  "commands.teleport_commands.tpa.received": "Tpa%0% Request Received From %1%",
-  "commands.teleport_commands.tpa.sent": "Tpa%0% Request Sent to %1%",
-  "commands.teleport_commands.tpa.accept": "[Accept]",
-  "commands.teleport_commands.tpa.deny": " [Deny]",
-  "commands.teleport_commands.tpa.expired": "Tpa%0% Request Expired",
-  "commands.teleport_commands.tpa.notFound": "No Requests found!",
-  "commands.teleport_commands.tpa.accepted": "Request Accepted",
-  "commands.teleport_commands.tpa.denied": "Request Denied",
 
   "commands.teleport_commands.common.teleport": "Teleporting",
   "commands.teleport_commands.common.error": "Error Teleporting!",

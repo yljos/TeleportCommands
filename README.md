@@ -19,10 +19,8 @@ Here is the [Changelog](CHANGELOG.md)
 - `/defaulthome <name>` - Sets the default home
 <br>
 
-- `/tpa <player>` - Sends a tpa request to another player
-- `/tpahere <player>` - Sends a tpaHere request to another player
-- `/tpaaccept <player>` -  Accepts the tpa/ tpahere request of that player
-- `/tpadeny <player>` - Denies the tpa/tpaHere request of that player
+- `/tpa <player>` - Teleports you to another player
+- `/tpahere <player>` - Teleports another player to you
 
 <br>
 

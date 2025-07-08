@@ -24,15 +24,6 @@
   "commands.teleport_commands.homes.delete": "[Verwijderen]",
 
   "commands.teleport_commands.tpa.self": "Welp, Dat Was Makkelijk",
-  "commands.teleport_commands.tpa.alreadySent": "Er is al een verzoek verzonden naar %0%",
-  "commands.teleport_commands.tpa.received": "Tpa%0% Verzoek Ontvangen Van %1%",
-  "commands.teleport_commands.tpa.sent": "Tpa%0% Verzoek Verzonden Naar %1%",
-  "commands.teleport_commands.tpa.accept": "[Accepteren]",
-  "commands.teleport_commands.tpa.deny": " [Weigeren]",
-  "commands.teleport_commands.tpa.expired": "Tpa%0% Verzoek Verlopen",
-  "commands.teleport_commands.tpa.notFound": "Geen Verzoeken Gevonden!",
-  "commands.teleport_commands.tpa.accepted": "Verzoek Geaccepteerd",
-  "commands.teleport_commands.tpa.denied": "Verzoek Geweigerd",
 
   "commands.teleport_commands.common.teleport": "Teleporteren",
   "commands.teleport_commands.common.error": "Probleem tijdens het Teleporteren!",

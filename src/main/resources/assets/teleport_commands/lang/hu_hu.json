@@ -24,15 +24,6 @@
   "commands.teleport_commands.homes.delete": "[Törlés]",
 
   "commands.teleport_commands.tpa.self": "Hát ez gyors volt",
-  "commands.teleport_commands.tpa.alreadySent": "Egy kérés már el lett küldve %0%-nek",
-  "commands.teleport_commands.tpa.received": "Tpa%0% kérés megkapva %1%-től",
-  "commands.teleport_commands.tpa.sent": "tpa%0% kérés elküldve %1%-nek",
-  "commands.teleport_commands.tpa.accept": "[Elfogadás]",
-  "commands.teleport_commands.tpa.deny": " [Elutasítás]",
-  "commands.teleport_commands.tpa.expired": "Tpa%0% kérés lejárt",
-  "commands.teleport_commands.tpa.notFound": "Semmi kérésed sincsen!",
-  "commands.teleport_commands.tpa.accepted": "Elfogadva",
-  "commands.teleport_commands.tpa.denied": "Elutasítva",
 
   "commands.teleport_commands.common.teleport": "Utazás",
   "commands.teleport_commands.common.error": "Hiba történt a teleportálással!",
