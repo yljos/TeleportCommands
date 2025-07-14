@@ -152,7 +152,7 @@ public class warp {
         
         // 检查是否已在该位置
         if (player.blockPosition().equals(warpPos) && player.level() == warpWorld) {
-            player.displayClientMessage(getTranslatedText("commands.teleport_commands.home.goSame", player).withStyle(ChatFormatting.AQUA), true);
+            player.displayClientMessage(getTranslatedText("commands.teleport_commands.warp.goSame", player).withStyle(ChatFormatting.AQUA), true);
         } else {
             Vec3 teleportPos = new Vec3(warp.x + 0.5, warp.y, warp.z + 0.5);
             player.displayClientMessage(getTranslatedText("commands.teleport_commands.common.teleport", player), true);
