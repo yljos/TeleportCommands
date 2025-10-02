@@ -55,24 +55,6 @@ public class home {
                     }
                     return 0;
                 }));
-
-        // 删除家园
-        commandManager.getDispatcher().register(Commands.literal("delhome")
-                .executes(context -> {
-                    final ServerPlayer player = context.getSource().getPlayerOrException();
-
-                    try {
-                        DeleteHome(player);
-                    } catch (Exception e) {
-                        TeleportCommands.LOGGER.error(String.valueOf(e));
-                        player.displayClientMessage(
-                            getTranslatedText("commands.teleport_commands.home.deleteError", player)
-                                .withStyle(ChatFormatting.RED, ChatFormatting.BOLD), 
-                            true);
-                        return 1;
-                    }
-                    return 0;
-                }));
     }
 
     private static void SetHome(ServerPlayer player) throws Exception {
@@ -148,28 +130,5 @@ public class home {
                     .withStyle(ChatFormatting.RED), 
                 true);
         }
-    }
-
-    private static void DeleteHome(ServerPlayer player) throws Exception {
-        StorageManager.PlayerStorageClass storages = GetPlayerStorage(player.getStringUUID());
-        StorageManager.StorageClass storage = storages.storage;
-        StorageManager.StorageClass.Player playerStorage = storages.playerStorage;
-
-        if (playerStorage.Homes.isEmpty()) {
-            player.displayClientMessage(
-                Component.literal("你没有设置家园位置")
-                    .withStyle(ChatFormatting.RED), 
-                true);
-            return;
-        }
-
-        playerStorage.Homes.clear();
-        playerStorage.DefaultHome = "";
-
-        StorageSaver(storage);
-        player.displayClientMessage(
-            Component.literal("家园位置已删除")
-                .withStyle(ChatFormatting.GREEN), 
-            true);
     }
 }
