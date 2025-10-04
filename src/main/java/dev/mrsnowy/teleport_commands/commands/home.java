@@ -56,9 +56,9 @@ public class home {
         BlockPos blockPos = player.getBlockPos();
         ServerWorld world = player.getServerWorld();
 
+        // 不再需要传递 "home" 名称
         StorageManager.setPlayerHome(
             player.getUuidAsString(),
-            "home",
             blockPos.getX(),
             blockPos.getY(),
             blockPos.getZ(),

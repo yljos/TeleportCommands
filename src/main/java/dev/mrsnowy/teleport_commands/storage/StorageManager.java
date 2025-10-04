@@ -55,6 +55,7 @@ public class StorageManager {
         Files.write(STORAGE_FILE, json.getBytes(), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
+    // 获取或创建玩家数据
     public static JsonObject getPlayerData(String uuid) {
         JsonArray players = storageData.getAsJsonArray("Players");
         
@@ -67,50 +68,29 @@ public class StorageManager {
             }
         }
         
-        // 创建新玩家数据
+        // 创建新玩家数据 - 简化版本，直接存储家园坐标
         JsonObject newPlayer = new JsonObject();
         newPlayer.addProperty("UUID", uuid);
-        newPlayer.addProperty("DefaultHome", "");
-        newPlayer.add("Homes", new JsonArray());
+        newPlayer.addProperty("home_x", 0);
+        newPlayer.addProperty("home_y", 0);
+        newPlayer.addProperty("home_z", 0);
+        newPlayer.addProperty("home_world", "");
+        newPlayer.addProperty("has_home", false);
         
         players.add(newPlayer);
         return newPlayer;
     }
 
-    public static void setPlayerHome(String uuid, String homeName, int x, int y, int z, String world) {
+    // 设置家园 - 直接覆盖，不需要名称参数
+    public static void setPlayerHome(String uuid, int x, int y, int z, String world) {
         JsonObject playerData = getPlayerData(uuid);
-        JsonArray homes = playerData.getAsJsonArray("Homes");
         
-        // 检查是否已存在同名家园
-        JsonObject existingHome = null;
-        for (JsonElement element : homes) {
-            if (element.isJsonObject()) {
-                JsonObject home = element.getAsJsonObject();
-                if (home.has("name") && home.get("name").getAsString().equals(homeName)) {
-                    existingHome = home;
-                    break;
-                }
-            }
-        }
-        
-        if (existingHome != null) {
-            // 更新现有家园
-            existingHome.addProperty("x", x);
-            existingHome.addProperty("y", y);
-            existingHome.addProperty("z", z);
-            existingHome.addProperty("world", world);
-        } else {
-            // 创建新家园
-            JsonObject newHome = new JsonObject();
-            newHome.addProperty("name", homeName);
-            newHome.addProperty("x", x);
-            newHome.addProperty("y", y);
-            newHome.addProperty("z", z);
-            newHome.addProperty("world", world);
-            homes.add(newHome);
-        }
-        
-        playerData.addProperty("DefaultHome", homeName);
+        // 直接覆盖家园位置
+        playerData.addProperty("home_x", x);
+        playerData.addProperty("home_y", y);
+        playerData.addProperty("home_z", z);
+        playerData.addProperty("home_world", world);
+        playerData.addProperty("has_home", true);
         
         try {
             saveStorage();
@@ -119,28 +99,22 @@ public class StorageManager {
         }
     }
 
+    // 获取家园位置
     public static JsonObject getPlayerHome(String uuid) {
         JsonObject playerData = getPlayerData(uuid);
-        String defaultHome = playerData.has("DefaultHome") ? playerData.get("DefaultHome").getAsString() : "";
-        JsonArray homes = playerData.getAsJsonArray("Homes");
         
-        if (homes.size() == 0) {
+        // 检查是否有家园
+        if (!playerData.has("has_home") || !playerData.get("has_home").getAsBoolean()) {
             return null;
         }
         
-        // 如果有默认家园，返回默认家园
-        if (!defaultHome.isEmpty()) {
-            for (JsonElement element : homes) {
-                if (element.isJsonObject()) {
-                    JsonObject home = element.getAsJsonObject();
-                    if (home.has("name") && home.get("name").getAsString().equals(defaultHome)) {
-                        return home;
-                    }
-                }
-            }
-        }
+        // 返回家园数据
+        JsonObject home = new JsonObject();
+        home.addProperty("x", playerData.get("home_x").getAsInt());
+        home.addProperty("y", playerData.get("home_y").getAsInt());
+        home.addProperty("z", playerData.get("home_z").getAsInt());
+        home.addProperty("world", playerData.get("home_world").getAsString());
         
-        // 否则返回第一个家园
-        return homes.get(0).getAsJsonObject();
+        return home;
     }
 }
