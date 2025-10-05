@@ -81,7 +81,7 @@ public class tpa {
         
         if (here) {
             fromPlayer.sendMessage(
-                Text.literal("已将 " + targetName + " 传送到你这里")
+                Text.literal("已将 " + targetName + " 拉来")
                     .setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
                 false);
             toPlayer.sendMessage(
@@ -90,11 +90,11 @@ public class tpa {
                 false);
         } else {
             fromPlayer.sendMessage(
-                Text.literal("已传送到 " + targetName)
+                Text.literal("已到 " + targetName)
                     .setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
                 false);
             toPlayer.sendMessage(
-                Text.literal(fromName + " 传送到了你这里")
+                Text.literal(fromName + " 传送到你")
                     .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)),
                 false);
         }

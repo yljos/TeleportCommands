@@ -30,7 +30,7 @@ public class home {
                         return 1;
                     } catch (Exception e) {
                         TeleportCommands.LOGGER.error("SetHome error", e);
-                        player.sendMessage(Text.literal("设置家园失败")
+                        player.sendMessage(Text.literal("设置家失败")
                             .setStyle(Style.EMPTY.withColor(Formatting.RED)), false);
                         return 0;
                     }
@@ -45,7 +45,7 @@ public class home {
                         return 1;
                     } catch (Exception e) {
                         TeleportCommands.LOGGER.error("GoHome error", e);
-                        player.sendMessage(Text.literal("传送到家园失败")
+                        player.sendMessage(Text.literal("传送到家失败")
                             .setStyle(Style.EMPTY.withColor(Formatting.RED)), false);
                         return 0;
                     }
@@ -66,7 +66,7 @@ public class home {
         );
 
         player.sendMessage(
-            Text.literal("家园位置已设置: " + blockPos.getX() + ", " + blockPos.getY() + ", " + blockPos.getZ())
+            Text.literal("家已设置: " + blockPos.getX() + ", " + blockPos.getY() + ", " + blockPos.getZ())
                 .setStyle(Style.EMPTY.withColor(Formatting.GREEN)), 
             false);
     }
@@ -76,7 +76,7 @@ public class home {
 
         if (home == null) {
             player.sendMessage(
-                Text.literal("你还没有设置家园位置，使用 /sethome 来设置")
+                Text.literal("你还没有设置家，使用 /sethome 来设置")
                     .setStyle(Style.EMPTY.withColor(Formatting.AQUA)), 
                 false);
             return;
@@ -95,13 +95,13 @@ public class home {
                 
                 if (!player.getBlockPos().equals(homePos)) {
                     player.sendMessage(
-                        Text.literal("正在传送到家园...")
+                        Text.literal("正在回家...")
                             .setStyle(Style.EMPTY.withColor(Formatting.GREEN)), 
                         false);
                     TeleportUtils.teleportPlayer(player, currentWorld, new Vec3d(homeX + 0.5, homeY, homeZ + 0.5));
                 } else {
                     player.sendMessage(
-                        Text.literal("你已经在家园了")
+                        Text.literal("已经在家")
                             .setStyle(Style.EMPTY.withColor(Formatting.AQUA)), 
                         false);
                 }
