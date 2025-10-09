@@ -9,7 +9,7 @@ import net.minecraft.world.TeleportTarget;
 public class TeleportUtils {
     public static void teleportPlayer(ServerPlayerEntity player, ServerWorld world, Vec3d coords) {
         // 传送前音效 - 使用简化的方法
-        player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 0.4f, 1.0f);
+        player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
 
         // 使用 TeleportTarget 进行传送
         if (player.getServerWorld() == world) {
@@ -29,6 +29,6 @@ public class TeleportUtils {
         }
 
         // 传送后音效 - 使用简化的方法
-        player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 0.4f, 1.0f);
+        player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
     }
 }
