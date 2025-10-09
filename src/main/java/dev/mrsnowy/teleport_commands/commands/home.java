@@ -1,5 +1,6 @@
 package dev.mrsnowy.teleport_commands.commands;
 
+import net.minecraft.sound.SoundEvents;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 import dev.mrsnowy.teleport_commands.TeleportCommands;
@@ -96,8 +97,9 @@ public class home {
                         player.sendMessage(
                             Text.literal("正在回家...")
                                 .setStyle(Style.EMPTY.withColor(Formatting.GREEN)), 
-                            false);
+                            false);   
                         TeleportUtils.teleportPlayer(player, currentWorld, new Vec3d(homeX + 0.5, homeY, homeZ + 0.5));
+                        player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
                     } else {
                         player.sendMessage(
                             Text.literal("已经在家")

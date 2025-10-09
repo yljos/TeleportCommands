@@ -1,5 +1,6 @@
 package dev.mrsnowy.teleport_commands.commands;
 
+import net.minecraft.sound.SoundEvents;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import dev.mrsnowy.teleport_commands.suggestions.tpaSuggestionProvider;
@@ -24,6 +25,8 @@ public class tpa {
                             final ServerPlayerEntity targetPlayer = EntityArgumentType.getPlayer(context, "player");
                             final ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
                             directTeleport(player, targetPlayer, false);
+                            player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
+
                             return 1;
                         }))
                 // 坐标传送
@@ -36,6 +39,7 @@ public class tpa {
                                             double y = DoubleArgumentType.getDouble(context, "y");
                                             double z = DoubleArgumentType.getDouble(context, "z");
                                             teleportToCoordinates(player, x, y, z);
+                                            player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
                                             return 1;
                                         })))));
         
@@ -47,6 +51,7 @@ public class tpa {
                             final ServerPlayerEntity targetPlayer = EntityArgumentType.getPlayer(context, "player");
                             final ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
                             directTeleport(player, targetPlayer, true);
+                            player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
                             return 1;
                         })));
     }
