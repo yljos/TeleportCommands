@@ -1,24 +1,34 @@
 package dev.mrsnowy.teleport_commands.utils;
 
-// 修改导入路径
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 
 public class TeleportUtils {
     public static void teleportPlayer(ServerPlayerEntity player, ServerWorld world, Vec3d coords) {
-        // 传送前效果
-        world.spawnParticles(ParticleTypes.PORTAL, player.getX(), player.getY(), player.getZ(), 15, 0.0D, 1.0D, 0.0D, 0.03);
-        world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.4f, 1.0f);
+        // 传送前音效 - 使用简化的方法
+        player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 0.4f, 1.0f);
 
-        // 传送
-        player.teleport(world, coords.x, coords.y, coords.z, player.getYaw(), player.getPitch());
+        // 使用 TeleportTarget 进行传送
+        if (player.getServerWorld() == world) {
+            // 同世界传送
+            player.requestTeleport(coords.x, coords.y, coords.z);
+        } else {
+            // 跨维度传送
+            TeleportTarget target = new TeleportTarget(
+                world, 
+                coords, 
+                Vec3d.ZERO, 
+                player.getYaw(), 
+                player.getPitch(),
+                (entity) -> {}
+            );
+            player.teleportTo(target);
+        }
 
-        // 传送后效果
-        world.spawnParticles(ParticleTypes.PORTAL, player.getX(), player.getY(), player.getZ(), 15, 0.0D, 0.0D, 0.0D, 0.03);
-        world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.4f, 1.0f);
+        // 传送后音效 - 使用简化的方法
+        player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 0.4f, 1.0f);
     }
 }

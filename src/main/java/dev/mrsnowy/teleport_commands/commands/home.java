@@ -5,10 +5,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import dev.mrsnowy.teleport_commands.TeleportCommands;
 import dev.mrsnowy.teleport_commands.storage.StorageManager;
 import dev.mrsnowy.teleport_commands.utils.TeleportUtils;
-// 修改导入路径
 import net.minecraft.text.Text;
 import net.minecraft.text.Style;
-import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.util.math.BlockPos;
@@ -56,7 +54,7 @@ public class home {
         BlockPos blockPos = player.getBlockPos();
         ServerWorld world = player.getServerWorld();
 
-        // 不再需要传递 "home" 名称
+        // 允许在任何世界设置家
         StorageManager.setPlayerHome(
             player.getUuidAsString(),
             blockPos.getX(),
@@ -88,25 +86,34 @@ public class home {
         String homeWorld = home.get("world").getAsString();
         boolean foundWorld = false;
 
-        for (ServerWorld currentWorld : Objects.requireNonNull(player.getServer()).getWorlds()) {
-            if (Objects.equals(currentWorld.getRegistryKey().getValue().toString(), homeWorld)) {
-                foundWorld = true;
-                BlockPos homePos = new BlockPos(homeX, homeY, homeZ);
-                
-                if (!player.getBlockPos().equals(homePos)) {
-                    player.sendMessage(
-                        Text.literal("正在回家...")
-                            .setStyle(Style.EMPTY.withColor(Formatting.GREEN)), 
-                        false);
-                    TeleportUtils.teleportPlayer(player, currentWorld, new Vec3d(homeX + 0.5, homeY, homeZ + 0.5));
-                } else {
-                    player.sendMessage(
-                        Text.literal("已经在家")
-                            .setStyle(Style.EMPTY.withColor(Formatting.AQUA)), 
-                        false);
+        try {
+            for (ServerWorld currentWorld : player.getServerWorld().getServer().getWorlds()) {
+                if (Objects.equals(currentWorld.getRegistryKey().getValue().toString(), homeWorld)) {
+                    foundWorld = true;
+                    BlockPos homePos = new BlockPos(homeX, homeY, homeZ);
+                    
+                    if (!player.getBlockPos().equals(homePos) || player.getServerWorld() != currentWorld) {
+                        player.sendMessage(
+                            Text.literal("正在回家...")
+                                .setStyle(Style.EMPTY.withColor(Formatting.GREEN)), 
+                            false);
+                        TeleportUtils.teleportPlayer(player, currentWorld, new Vec3d(homeX + 0.5, homeY, homeZ + 0.5));
+                    } else {
+                        player.sendMessage(
+                            Text.literal("已经在家")
+                                .setStyle(Style.EMPTY.withColor(Formatting.AQUA)), 
+                            false);
+                    }
+                    break;
                 }
-                break;
             }
+        } catch (Exception e) {
+            TeleportCommands.LOGGER.error("获取服务器世界失败", e);
+            player.sendMessage(
+                Text.literal("无法获取世界信息")
+                    .setStyle(Style.EMPTY.withColor(Formatting.RED)), 
+                false);
+            return;
         }
 
         if (!foundWorld) {

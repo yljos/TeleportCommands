@@ -1,7 +1,7 @@
 plugins {
     // Required for NeoGradle
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
-    id 'fabric-loom' version '1.4-SNAPSHOT'
+    id 'fabric-loom' version '1.6-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -38,7 +38,8 @@ processResources {
     }
 }
 
-def targetJavaVersion = 17
+// 更新 Java 版本为 21
+def targetJavaVersion = 21
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
@@ -59,4 +60,13 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}"}
     }
+}
+
+// 添加 Java 21 兼容性设置
+compileJava {
+    options.release = 21
+}
+
+compileTestJava {
+    options.release = 21
 }

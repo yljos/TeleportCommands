@@ -4,7 +4,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import dev.mrsnowy.teleport_commands.suggestions.tpaSuggestionProvider;
 import dev.mrsnowy.teleport_commands.utils.TeleportUtils;
-// 修改导入路径
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.CommandManager;
@@ -74,7 +73,8 @@ public class tpa {
         ServerPlayerEntity destinationPlayer = here ? fromPlayer : toPlayer;
         ServerPlayerEntity teleportingPlayer = here ? toPlayer : fromPlayer;
 
-        TeleportUtils.teleportPlayer(teleportingPlayer, destinationPlayer.getServerWorld(), destinationPlayer.getPos());
+        // 修复：使用 getBlockPos().toCenterPos() 代替 getPos()
+        TeleportUtils.teleportPlayer(teleportingPlayer, destinationPlayer.getServerWorld(), destinationPlayer.getBlockPos().toCenterPos());
         
         String targetName = toPlayer.getName().getString();
         String fromName = fromPlayer.getName().getString();

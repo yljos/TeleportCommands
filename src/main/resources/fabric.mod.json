@@ -1,25 +1,25 @@
 {
-    "schemaVersion": 1,
-    "id": "teleport_commands",
-    "version": "${version}",
-    "name": "Teleport Commands",
-    "description": "Simple teleportation commands for servers",
-    "authors": [
-        "Mr. Snowy"
-    ],
-    "contact": {},
-    "license": "MIT",
-    "icon": "assets/teleport_commands/icon.png",
-    "environment": "*",
-    "entrypoints": {
-        "main": [
-            "dev.mrsnowy.teleport_commands.TeleportCommandsMod"
-        ]
-    },
-    "depends": {
-        "fabricloader": ">=${loader_version}",
-        "fabric-api": "*",
-        "minecraft": "~${minecraft_version}",
-        "java": ">=17"
-    }
+  "schemaVersion": 1,
+  "id": "teleport_commands",
+  "version": "${version}",
+  "name": "Teleport Commands",
+  "description": "Simple teleportation commands for servers",
+  "authors": [
+    "Mr. Snowy"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/teleport_commands/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.mrsnowy.teleport_commands.TeleportCommandsMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "~1.21",
+    "java": ">=21"
+  }
 }
