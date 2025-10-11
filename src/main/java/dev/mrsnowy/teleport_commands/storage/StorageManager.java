@@ -1,120 +1,58 @@
 package dev.mrsnowy.teleport_commands.storage;
 
-import com.google.gson.*;
-import dev.mrsnowy.teleport_commands.TeleportCommands;
-
-import java.io.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.Paths;
 
 public class StorageManager {
-    public static Path STORAGE_FILE;
-    private static JsonObject storageData;
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = new Gson();
+    private static Path dataDir;
 
-    public static void StorageInit() throws IOException {
-        STORAGE_FILE = TeleportCommands.SAVE_DIR.resolve("teleport_commands.json");
-        
-        if (!Files.exists(STORAGE_FILE)) {
-            // 创建默认结构
-            JsonObject defaultData = new JsonObject();
-            defaultData.add("Players", new JsonArray());
-            
-            String json = GSON.toJson(defaultData);
-            Files.write(STORAGE_FILE, json.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-            TeleportCommands.LOGGER.info("Created new storage file: {}", STORAGE_FILE);
-        }
-        
-        loadStorage();
-    }
-
-    private static void loadStorage() throws IOException {
-        try (FileReader reader = new FileReader(STORAGE_FILE.toFile())) {
-            JsonElement element = JsonParser.parseReader(reader);
-            if (element.isJsonObject()) {
-                storageData = element.getAsJsonObject();
-            } else {
-                storageData = new JsonObject();
-                storageData.add("Players", new JsonArray());
-            }
+    public static void StorageInit() {
+        // 初始化数据目录
+        dataDir = Paths.get("teleport_commands_data");
+        try {
+            Files.createDirectories(dataDir);
+        } catch (IOException e) {
+            System.err.println("Failed to create data directory: " + e.getMessage());
         }
     }
 
     public static void StorageCloseToSave() {
-        try {
-            saveStorage();
-            TeleportCommands.LOGGER.info("Storage saved successfully");
+        // 保存数据逻辑（如果需要）
+    }
+
+    public static void setPlayerHome(String playerUUID, int x, int y, int z, String world) {
+        JsonObject homeData = new JsonObject();
+        homeData.addProperty("x", x);
+        homeData.addProperty("y", y);
+        homeData.addProperty("z", z);
+        homeData.addProperty("world", world);
+
+        Path homeFile = dataDir.resolve(playerUUID + "_home.json");
+        try (FileWriter writer = new FileWriter(homeFile.toFile())) {
+            GSON.toJson(homeData, writer);
         } catch (IOException e) {
-            TeleportCommands.LOGGER.error("Failed to save storage", e);
+            System.err.println("Failed to save home data: " + e.getMessage());
         }
     }
 
-    private static void saveStorage() throws IOException {
-        String json = GSON.toJson(storageData);
-        Files.write(STORAGE_FILE, json.getBytes(), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-    }
-
-    // 获取或创建玩家数据
-    public static JsonObject getPlayerData(String uuid) {
-        JsonArray players = storageData.getAsJsonArray("Players");
-        
-        for (JsonElement element : players) {
-            if (element.isJsonObject()) {
-                JsonObject player = element.getAsJsonObject();
-                if (player.has("UUID") && player.get("UUID").getAsString().equals(uuid)) {
-                    return player;
-                }
-            }
-        }
-        
-        // 创建新玩家数据 - 简化版本，直接存储家园坐标
-        JsonObject newPlayer = new JsonObject();
-        newPlayer.addProperty("UUID", uuid);
-        newPlayer.addProperty("home_x", 0);
-        newPlayer.addProperty("home_y", 0);
-        newPlayer.addProperty("home_z", 0);
-        newPlayer.addProperty("home_world", "");
-        newPlayer.addProperty("has_home", false);
-        
-        players.add(newPlayer);
-        return newPlayer;
-    }
-
-    // 设置家园 - 直接覆盖，不需要名称参数
-    public static void setPlayerHome(String uuid, int x, int y, int z, String world) {
-        JsonObject playerData = getPlayerData(uuid);
-        
-        // 直接覆盖家园位置
-        playerData.addProperty("home_x", x);
-        playerData.addProperty("home_y", y);
-        playerData.addProperty("home_z", z);
-        playerData.addProperty("home_world", world);
-        playerData.addProperty("has_home", true);
-        
-        try {
-            saveStorage();
-        } catch (IOException e) {
-            TeleportCommands.LOGGER.error("Failed to save player home", e);
-        }
-    }
-
-    // 获取家园位置
-    public static JsonObject getPlayerHome(String uuid) {
-        JsonObject playerData = getPlayerData(uuid);
-        
-        // 检查是否有家园
-        if (!playerData.has("has_home") || !playerData.get("has_home").getAsBoolean()) {
+    public static JsonObject getPlayerHome(String playerUUID) {
+        Path homeFile = dataDir.resolve(playerUUID + "_home.json");
+        if (!Files.exists(homeFile)) {
             return null;
         }
-        
-        // 返回家园数据
-        JsonObject home = new JsonObject();
-        home.addProperty("x", playerData.get("home_x").getAsInt());
-        home.addProperty("y", playerData.get("home_y").getAsInt());
-        home.addProperty("z", playerData.get("home_z").getAsInt());
-        home.addProperty("world", playerData.get("home_world").getAsString());
-        
-        return home;
+
+        try (FileReader reader = new FileReader(homeFile.toFile())) {
+            return GSON.fromJson(reader, JsonObject.class);
+        } catch (IOException e) {
+            System.err.println("Failed to load home data: " + e.getMessage());
+            return null;
+        }
     }
 }

@@ -2,7 +2,6 @@ package dev.mrsnowy.teleport_commands.commands;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
-import dev.mrsnowy.teleport_commands.TeleportCommands;
 import dev.mrsnowy.teleport_commands.storage.StorageManager;
 import dev.mrsnowy.teleport_commands.utils.TeleportUtils;
 import net.minecraft.server.command.CommandManager;
@@ -27,7 +26,6 @@ public class home {
                         SetHome(player);
                         return 1;
                     } catch (Exception e) {
-                        TeleportCommands.LOGGER.error("SetHome error", e);
                         player.sendMessage(Text.literal("设置家失败")
                                 .setStyle(Style.EMPTY.withColor(Formatting.RED)), false);
                         return 0;
@@ -42,7 +40,6 @@ public class home {
                         GoHome(player);
                         return 1;
                     } catch (Exception e) {
-                        TeleportCommands.LOGGER.error("GoHome error", e);
                         player.sendMessage(Text.literal("传送到家失败")
                                 .setStyle(Style.EMPTY.withColor(Formatting.RED)), false);
                         return 0;
