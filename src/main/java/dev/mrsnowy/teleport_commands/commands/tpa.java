@@ -1,19 +1,17 @@
 package dev.mrsnowy.teleport_commands.commands;
 
-import net.minecraft.sound.SoundEvents;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import dev.mrsnowy.teleport_commands.suggestions.tpaSuggestionProvider;
 import dev.mrsnowy.teleport_commands.utils.TeleportUtils;
-import net.minecraft.command.CommandSource;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.text.Text;
-import net.minecraft.text.Style;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.Vec3d;
 
 public class tpa {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -24,9 +22,7 @@ public class tpa {
                         .executes(context -> {
                             final ServerPlayerEntity targetPlayer = EntityArgumentType.getPlayer(context, "player");
                             final ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-                            directTeleport(player, targetPlayer, false);
-                            player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
-
+                            handleTpa(player, targetPlayer);
                             return 1;
                         }))
                 // 坐标传送
@@ -38,11 +34,13 @@ public class tpa {
                                             double x = DoubleArgumentType.getDouble(context, "x");
                                             double y = DoubleArgumentType.getDouble(context, "y");
                                             double z = DoubleArgumentType.getDouble(context, "z");
-                                            teleportToCoordinates(player, x, y, z);
-                                            player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
+                                            TeleportUtils.createTeleport(player, player.getServerWorld(), new Vec3d(x, y, z),
+                                                    null,
+                                                    Text.literal(String.format("传送到: %.1f, %.1f, %.1f", x, y, z))
+                                                            .setStyle(Style.EMPTY.withColor(Formatting.GREEN)));
                                             return 1;
                                         })))));
-        
+
         // 将玩家传送到自己
         dispatcher.register(CommandManager.literal("tpahere")
                 .then(CommandManager.argument("player", EntityArgumentType.player())
@@ -50,58 +48,52 @@ public class tpa {
                         .executes(context -> {
                             final ServerPlayerEntity targetPlayer = EntityArgumentType.getPlayer(context, "player");
                             final ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-                            directTeleport(player, targetPlayer, true);
-                            player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
+                            handleTpaHere(player, targetPlayer);
                             return 1;
                         })));
     }
 
-    private static void teleportToCoordinates(ServerPlayerEntity player, double x, double y, double z) {
-        Vec3d teleportPos = new Vec3d(x, y, z);
-        TeleportUtils.teleportPlayer(player, player.getServerWorld(), teleportPos);
-        
-        player.sendMessage(
-            Text.literal(String.format("传送到: %.1f, %.1f, %.1f", x, y, z))
-                .setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
-            false);
-    }
-
-    private static void directTeleport(ServerPlayerEntity fromPlayer, ServerPlayerEntity toPlayer, boolean here) {
-        if (fromPlayer == toPlayer) {
-            fromPlayer.sendMessage(
-                Text.literal("你不能传送到自己")
-                    .setStyle(Style.EMPTY.withColor(Formatting.RED)),
-                false);
+    private static void handleTpa(ServerPlayerEntity player, ServerPlayerEntity targetPlayer) {
+        if (player == targetPlayer) {
+            player.sendMessage(
+                    Text.literal("你不能传送到自己").setStyle(Style.EMPTY.withColor(Formatting.RED)),
+                    false);
             return;
         }
 
-        ServerPlayerEntity destinationPlayer = here ? fromPlayer : toPlayer;
-        ServerPlayerEntity teleportingPlayer = here ? toPlayer : fromPlayer;
+        TeleportUtils.createTeleport(
+                player,
+                targetPlayer.getServerWorld(),
+                targetPlayer.getBlockPos().toCenterPos(),
+                null,
+                Text.literal("已到 " + targetPlayer.getName().getString()).setStyle(Style.EMPTY.withColor(Formatting.GREEN))
+        );
 
-        // 修复：使用 getBlockPos().toCenterPos() 代替 getPos()
-        TeleportUtils.teleportPlayer(teleportingPlayer, destinationPlayer.getServerWorld(), destinationPlayer.getBlockPos().toCenterPos());
-        
-        String targetName = toPlayer.getName().getString();
-        String fromName = fromPlayer.getName().getString();
-        
-        if (here) {
-            fromPlayer.sendMessage(
-                Text.literal("已将 " + targetName + " 拉来")
-                    .setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
-                false);
-            toPlayer.sendMessage(
-                Text.literal("你被 " + fromName + " 传送了")
-                    .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)),
-                false);
-        } else {
-            fromPlayer.sendMessage(
-                Text.literal("已到 " + targetName)
-                    .setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
-                false);
-            toPlayer.sendMessage(
-                Text.literal(fromName + " 传送到你")
-                    .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)),
-                false);
+        targetPlayer.sendMessage(
+                Text.literal(player.getName().getString() + " 传送到你").setStyle(Style.EMPTY.withColor(Formatting.YELLOW)),
+                false
+        );
+    }
+
+    private static void handleTpaHere(ServerPlayerEntity issuer, ServerPlayerEntity targetPlayer) {
+        if (issuer == targetPlayer) {
+            issuer.sendMessage(
+                    Text.literal("你不能将自己传送给自己").setStyle(Style.EMPTY.withColor(Formatting.RED)),
+                    false);
+            return;
         }
+
+        TeleportUtils.createTeleport(
+                targetPlayer,
+                issuer.getServerWorld(),
+                issuer.getBlockPos().toCenterPos(),
+                null,
+                Text.literal("你被 " + issuer.getName().getString() + " 传送了").setStyle(Style.EMPTY.withColor(Formatting.YELLOW))
+        );
+
+        issuer.sendMessage(
+                Text.literal("已将 " + targetPlayer.getName().getString() + " 拉来").setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
+                false
+        );
     }
 }
