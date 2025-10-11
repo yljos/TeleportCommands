@@ -1,7 +1,12 @@
 package dev.mrsnowy.teleport_commands.utils;
 
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
@@ -31,7 +36,24 @@ public class TeleportUtils {
 
         // 调用私有的底层传送逻辑
         teleportPlayerInternal(player, world, coords);
-        player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 2.0f, 1.0f);
+
+        // 修复：通过直接发送数据包的方式为所有人播放声音，以获得最好的兼容性
+        RegistryEntry<SoundEvent> soundEntry = Registries.SOUND_EVENT.getEntry(SoundEvents.ENTITY_ENDERMAN_TELEPORT);
+        PlaySoundS2CPacket packet = new PlaySoundS2CPacket(
+                soundEntry,
+                SoundCategory.PLAYERS,
+                coords.x,
+                coords.y,
+                coords.z,
+                2.0f, // 音量
+                1.0f, // 音调
+                world.getRandom().nextLong()
+        );
+
+        // 将数据包发送给目标世界中的所有玩家
+        for (ServerPlayerEntity p : world.getPlayers()) {
+            p.networkHandler.sendPacket(packet);
+        }
 
         if (postTeleportMessage != null) {
             player.sendMessage(postTeleportMessage, false);
