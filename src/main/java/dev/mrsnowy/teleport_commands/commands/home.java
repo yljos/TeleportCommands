@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 import dev.mrsnowy.teleport_commands.storage.StorageManager;
 import dev.mrsnowy.teleport_commands.utils.TeleportUtils;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -36,8 +37,11 @@ public class home {
         dispatcher.register(CommandManager.literal("home")
                 .executes(context -> {
                     final ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+                    // 修复：从命令上下文中获取服务器实例
+                    final MinecraftServer server = context.getSource().getServer();
                     try {
-                        GoHome(player);
+                        // 将服务器实例传递给 GoHome 方法
+                        GoHome(player, server);
                         return 1;
                     } catch (Exception e) {
                         player.sendMessage(Text.literal("传送到家失败")
@@ -65,7 +69,8 @@ public class home {
                 false);
     }
 
-    private static void GoHome(ServerPlayerEntity player) throws Exception {
+    // 修复：更新方法签名以接收服务器实例
+    private static void GoHome(ServerPlayerEntity player, MinecraftServer server) throws Exception {
         JsonObject homeData = StorageManager.getPlayerHome(player.getUuidAsString());
 
         if (homeData == null) {
@@ -82,7 +87,8 @@ public class home {
         String homeWorldId = homeData.get("world").getAsString();
 
         ServerWorld targetWorld = null;
-        for (ServerWorld world : player.getServer().getWorlds()) {
+        // 修复：使用传递进来的服务器实例来获取世界列表
+        for (ServerWorld world : server.getWorlds()) {
             if (Objects.equals(world.getRegistryKey().getValue().toString(), homeWorldId)) {
                 targetWorld = world;
                 break;
