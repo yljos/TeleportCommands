@@ -84,6 +84,16 @@ public class StorageManager {
         }
     }
 
+    public static boolean delWarp(String name) {
+        Path warpFile = dataDir.resolve("warp_" + name + ".json");
+        try {
+            return Files.deleteIfExists(warpFile);
+        } catch (IOException e) {
+            System.err.println("Failed to delete warp: " + e.getMessage());
+            return false;
+        }
+    }
+
     public static Path getDataDir() {
         return dataDir;
     }

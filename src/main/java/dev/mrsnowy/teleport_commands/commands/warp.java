@@ -77,5 +77,26 @@ public class warp {
                 })
             )
         );
+
+        // 删除传送点
+        dispatcher.register(CommandManager.literal("delwarp")
+            .then(CommandManager.argument("name", StringArgumentType.word())
+                .suggests(dev.mrsnowy.teleport_commands.suggestions.warpSuggestionProvider.SUGGEST_WARPS)
+                .executes(context -> {
+                    String name = StringArgumentType.getString(context, "name");
+                    boolean success = StorageManager.delWarp(name);
+                    ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+                    if (success) {
+                        player.sendMessage(Text.literal("已删除传送点: " + name)
+                            .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)), false);
+                        return 1;
+                    } else {
+                        player.sendMessage(Text.literal("传送点不存在: " + name)
+                            .setStyle(Style.EMPTY.withColor(Formatting.RED)), false);
+                        return 0;
+                    }
+                })
+            )
+        );
     }
 }
