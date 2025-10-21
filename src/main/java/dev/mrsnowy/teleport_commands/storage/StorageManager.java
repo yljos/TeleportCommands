@@ -55,4 +55,36 @@ public class StorageManager {
             return null;
         }
     }
+
+    public static void setWarp(String name, int x, int y, int z, String world) {
+        JsonObject warpData = new JsonObject();
+        warpData.addProperty("x", x);
+        warpData.addProperty("y", y);
+        warpData.addProperty("z", z);
+        warpData.addProperty("world", world);
+
+        Path warpFile = dataDir.resolve("warp_" + name + ".json");
+        try (FileWriter writer = new FileWriter(warpFile.toFile())) {
+            GSON.toJson(warpData, writer);
+        } catch (IOException e) {
+            System.err.println("Failed to save warp data: " + e.getMessage());
+        }
+    }
+
+    public static JsonObject getWarp(String name) {
+        Path warpFile = dataDir.resolve("warp_" + name + ".json");
+        if (!Files.exists(warpFile)) {
+            return null;
+        }
+        try (FileReader reader = new FileReader(warpFile.toFile())) {
+            return GSON.fromJson(reader, JsonObject.class);
+        } catch (IOException e) {
+            System.err.println("Failed to load warp data: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static Path getDataDir() {
+        return dataDir;
+    }
 }

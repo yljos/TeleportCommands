@@ -2,6 +2,7 @@ package dev.mrsnowy.teleport_commands;
 
 import dev.mrsnowy.teleport_commands.commands.home;
 import dev.mrsnowy.teleport_commands.commands.tpa;
+import dev.mrsnowy.teleport_commands.commands.warp;
 import dev.mrsnowy.teleport_commands.storage.StorageManager;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -28,6 +29,7 @@ public class TeleportCommands implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             home.register(dispatcher);
             tpa.register(dispatcher);
+            warp.register(dispatcher); // 注册warp命令
         });
         
         // 服务器生命周期事件
