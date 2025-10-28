@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class StorageManager {
     // 使用相对目录 teleport_commands_data（运行目录下的根目录）
@@ -28,15 +30,22 @@ public class StorageManager {
         STORAGE_FILE = DATA_DIR.resolve("teleport_commands.json");
 
         if (!Files.exists(STORAGE_FILE)) {
-            // 创建默认结构
+            // 创建默认结构，包含 Players 和 Warps
             JsonObject defaultData = new JsonObject();
             defaultData.add("Players", new JsonArray());
+            defaultData.add("Warps", new JsonObject());
 
             String json = GSON.toJson(defaultData);
             Files.write(STORAGE_FILE, json.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
         }
 
         loadStorage();
+
+        // 确保 Warps 对象存在（兼容旧文件）
+        if (!storageData.has("Warps") || !storageData.get("Warps").isJsonObject()) {
+            storageData.add("Warps", new JsonObject());
+            saveStorage();
+        }
     }
 
     private static void loadStorage() throws IOException {
@@ -47,6 +56,7 @@ public class StorageManager {
             } else {
                 storageData = new JsonObject();
                 storageData.add("Players", new JsonArray());
+                storageData.add("Warps", new JsonObject());
             }
         }
     }
@@ -69,7 +79,7 @@ public class StorageManager {
         Files.write(STORAGE_FILE, json.getBytes(), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
-    // 获取或创建玩家数据
+    // ----------------- 玩家 home 相关（保持原有逻辑） -----------------
     public static JsonObject getPlayerData(String uuid) {
         JsonArray players = storageData.getAsJsonArray("Players");
 
@@ -95,11 +105,9 @@ public class StorageManager {
         return newPlayer;
     }
 
-    // 设置家园 - 直接覆盖，不需要名称参数
     public static void setPlayerHome(String uuid, int x, int y, int z, String world) {
         JsonObject playerData = getPlayerData(uuid);
 
-        // 直接覆盖家园位置
         playerData.addProperty("home_x", x);
         playerData.addProperty("home_y", y);
         playerData.addProperty("home_z", z);
@@ -109,20 +117,16 @@ public class StorageManager {
         try {
             saveStorage();
         } catch (IOException e) {
-            // 记录或忽略
         }
     }
 
-    // 获取家园位置
     public static JsonObject getPlayerHome(String uuid) {
         JsonObject playerData = getPlayerData(uuid);
 
-        // 检查是否有家园
         if (!playerData.has("has_home") || !playerData.get("has_home").getAsBoolean()) {
             return null;
         }
 
-        // 返回家园数据
         JsonObject home = new JsonObject();
         home.addProperty("x", playerData.get("home_x").getAsInt());
         home.addProperty("y", playerData.get("home_y").getAsInt());
@@ -130,6 +134,65 @@ public class StorageManager {
         home.addProperty("world", playerData.get("home_world").getAsString());
 
         return home;
+    }
+
+    // ----------------- Warp 相关 API -----------------
+
+    // 设置/覆盖 warp
+    public static void setWarp(String name, int x, int y, int z, String world) {
+        JsonObject warps = storageData.getAsJsonObject("Warps");
+        if (warps == null) {
+            warps = new JsonObject();
+            storageData.add("Warps", warps);
+        }
+
+        JsonObject warp = new JsonObject();
+        warp.addProperty("x", x);
+        warp.addProperty("y", y);
+        warp.addProperty("z", z);
+        warp.addProperty("world", world);
+
+        warps.add(name, warp);
+
+        try {
+            saveStorage();
+        } catch (IOException e) {
+            // 忽略或记录
+        }
+    }
+
+    // 获取 warp（null 表示不存在）
+    public static JsonObject getWarp(String name) {
+        JsonObject warps = storageData.getAsJsonObject("Warps");
+        if (warps == null) return null;
+        JsonElement el = warps.get(name);
+        if (el == null || !el.isJsonObject()) return null;
+        return el.getAsJsonObject();
+    }
+
+    // 删除 warp，返回是否成功删除（存在则删除并返回 true）
+    public static boolean delWarp(String name) {
+        JsonObject warps = storageData.getAsJsonObject("Warps");
+        if (warps == null) return false;
+        if (!warps.has(name)) return false;
+        warps.remove(name);
+        try {
+            saveStorage();
+        } catch (IOException e) {
+            // 忽略或记录
+        }
+        return true;
+    }
+
+    // 列出所有 warp 名称
+    public static Set<String> listWarpNames() {
+        Set<String> names = new HashSet<>();
+        JsonObject warps = storageData.getAsJsonObject("Warps");
+        if (warps == null) return names;
+        for (String key : warps.keySet()) {
+            names.add(key);
+        }
+        return names;
     }
 
     // 供外部访问 dataDir（例如 warp suggestion provider）

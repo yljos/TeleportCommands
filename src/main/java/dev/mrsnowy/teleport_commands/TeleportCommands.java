@@ -2,6 +2,7 @@ package dev.mrsnowy.teleport_commands;
 
 import dev.mrsnowy.teleport_commands.commands.home;
 import dev.mrsnowy.teleport_commands.commands.tpa;
+import dev.mrsnowy.teleport_commands.commands.warp;
 import dev.mrsnowy.teleport_commands.storage.StorageManager;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -30,6 +31,11 @@ public class TeleportCommands implements ModInitializer {
                 tpa.register(dispatcher);
             } catch (Exception e) {
                 LOGGER.error("Failed to register tpa command", e);
+            }
+            try {
+                warp.register(dispatcher);
+            } catch (Exception e) {
+                LOGGER.error("Failed to register warp commands", e);
             }
         });
 
