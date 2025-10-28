@@ -7,7 +7,6 @@ import dev.mrsnowy.teleport_commands.utils.TeleportUtils;
 // 修改导入路径
 import net.minecraft.text.Text;
 import net.minecraft.text.Style;
-import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.util.math.BlockPos;
