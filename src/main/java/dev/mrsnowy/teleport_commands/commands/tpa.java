@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import dev.mrsnowy.teleport_commands.suggestions.tpaSuggestionProvider;
 import dev.mrsnowy.teleport_commands.utils.TeleportUtils;
 // 修改导入路径
-import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.command.argument.EntityArgumentType;
