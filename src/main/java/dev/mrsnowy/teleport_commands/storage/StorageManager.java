@@ -10,16 +10,17 @@ import java.nio.file.StandardOpenOption;
 import java.io.IOException;
 
 public class StorageManager {
-    // 使用相对目录 teleport_commands_data（工作目录下）
-    private static final Path DATA_DIR = Paths.get("teleport_commands_data");
+    // 使用相对目录 teleport_commands_data（运行目录下的根目录）
+    private static final Path DATA_DIR = Paths.get("teleport_commands_data").toAbsolutePath().normalize();
 
     // 存储文件放在 DATA_DIR/teleport_commands.json
     public static Path STORAGE_FILE;
     private static JsonObject storageData;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
+    // 无参初始化：始终使用运行目录下的 DATA_DIR
     public static void StorageInit() throws IOException {
-        // 确保数据目录存在
+        // 确保目录存在
         if (!Files.exists(DATA_DIR)) {
             Files.createDirectories(DATA_DIR);
         }
@@ -54,6 +55,7 @@ public class StorageManager {
         try {
             saveStorage();
         } catch (IOException e) {
+            // 可在此记录错误
         }
     }
 
@@ -107,6 +109,7 @@ public class StorageManager {
         try {
             saveStorage();
         } catch (IOException e) {
+            // 记录或忽略
         }
     }
 
