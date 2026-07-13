@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import dev.mrsnowy.teleport_commands.suggestions.tpaSuggestionProvider;
 import dev.mrsnowy.teleport_commands.utils.TeleportUtils;
-// 修改导入路径
+// Fix import paths
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.CommandManager;
@@ -17,17 +17,17 @@ import net.minecraft.util.Formatting;
 
 public class tpa {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        // 传送到玩家
+        // Teleport to player
         dispatcher.register(CommandManager.literal("tpa")
                 .then(CommandManager.argument("player", EntityArgumentType.player())
                         .suggests(tpaSuggestionProvider.SUGGEST_PLAYERS)
                         .executes(context -> {
                             final ServerPlayerEntity targetPlayer = EntityArgumentType.getPlayer(context, "player");
                             final ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-                            directTeleport(player, targetPlayer, false);
+                            directTeleport(player, targetPlayer);
                             return 1;
                         }))
-                // 坐标传送
+                // Teleport to coordinates
                 .then(CommandManager.argument("x", DoubleArgumentType.doubleArg())
                         .then(CommandManager.argument("y", DoubleArgumentType.doubleArg())
                                 .then(CommandManager.argument("z", DoubleArgumentType.doubleArg())
@@ -39,17 +39,6 @@ public class tpa {
                                             teleportToCoordinates(player, x, y, z);
                                             return 1;
                                         })))));
-        
-        // 将玩家传送到自己
-        dispatcher.register(CommandManager.literal("tpahere")
-                .then(CommandManager.argument("player", EntityArgumentType.player())
-                        .suggests(tpaSuggestionProvider.SUGGEST_PLAYERS)
-                        .executes(context -> {
-                            final ServerPlayerEntity targetPlayer = EntityArgumentType.getPlayer(context, "player");
-                            final ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-                            directTeleport(player, targetPlayer, true);
-                            return 1;
-                        })));
     }
 
     private static void teleportToCoordinates(ServerPlayerEntity player, double x, double y, double z) {
@@ -62,7 +51,7 @@ public class tpa {
             false);
     }
 
-    private static void directTeleport(ServerPlayerEntity fromPlayer, ServerPlayerEntity toPlayer, boolean here) {
+    private static void directTeleport(ServerPlayerEntity fromPlayer, ServerPlayerEntity toPlayer) {
         if (fromPlayer == toPlayer) {
             fromPlayer.sendMessage(
                 Text.literal("你不能传送到自己")
@@ -71,32 +60,18 @@ public class tpa {
             return;
         }
 
-        ServerPlayerEntity destinationPlayer = here ? fromPlayer : toPlayer;
-        ServerPlayerEntity teleportingPlayer = here ? toPlayer : fromPlayer;
-
-        TeleportUtils.teleportPlayer(teleportingPlayer, destinationPlayer.getServerWorld(), destinationPlayer.getPos());
+        TeleportUtils.teleportPlayer(fromPlayer, toPlayer.getServerWorld(), toPlayer.getPos());
         
         String targetName = toPlayer.getName().getString();
         String fromName = fromPlayer.getName().getString();
         
-        if (here) {
-            fromPlayer.sendMessage(
-                Text.literal("已将 " + targetName + " 拉来")
-                    .setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
-                false);
-            toPlayer.sendMessage(
-                Text.literal("你被 " + fromName + " 传送了")
-                    .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)),
-                false);
-        } else {
-            fromPlayer.sendMessage(
-                Text.literal("已到 " + targetName)
-                    .setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
-                false);
-            toPlayer.sendMessage(
-                Text.literal(fromName + " 传送到你")
-                    .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)),
-                false);
-        }
+        fromPlayer.sendMessage(
+            Text.literal("已到 " + targetName)
+                .setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
+            false);
+        toPlayer.sendMessage(
+            Text.literal(fromName + " 传送到你")
+                .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)),
+            false);
     }
 }
