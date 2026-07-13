@@ -76,7 +76,7 @@ public class home {
 
         if (home == null) {
             player.sendMessage(
-                Text.literal("你还没有设置家，使用 /sethome 来设置")
+                Text.literal("使用 /sethome 来设置")
                     .setStyle(Style.EMPTY.withColor(Formatting.AQUA)), 
                 false);
             return;

@@ -70,7 +70,7 @@ public class tpa {
                 .setStyle(Style.EMPTY.withColor(Formatting.GREEN)),
             false);
         toPlayer.sendMessage(
-            Text.literal(fromName + " 传送到你")
+            Text.literal(fromName + " 来了")
                 .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)),
             false);
     }
